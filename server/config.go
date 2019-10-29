@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/NYTimes/gizmo/config"
+	"github.com/darrenmcc/gizmo/config"
 	"github.com/NYTimes/logrotate"
 	"github.com/gorilla/handlers"
 	"github.com/kelseyhightower/envconfig"

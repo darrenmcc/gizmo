@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/NYTimes/gizmo/config"
-	"github.com/NYTimes/gizmo/config/mysql"
-	"github.com/NYTimes/gizmo/examples/servers/mysql-saved-items/service"
-	"github.com/NYTimes/gizmo/server"
+	"github.com/darrenmcc/gizmo/config"
+	"github.com/darrenmcc/gizmo/config/mysql"
+	"github.com/darrenmcc/gizmo/examples/servers/mysql-saved-items/service"
+	"github.com/darrenmcc/gizmo/server"
 	_ "github.com/go-sql-driver/mysql"
 )
 

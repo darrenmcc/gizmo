@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/NYTimes/gizmo/pubsub"
+	"github.com/darrenmcc/gizmo/pubsub"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/service/sqs"

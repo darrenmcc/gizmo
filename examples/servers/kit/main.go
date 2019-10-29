@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/NYTimes/gizmo/examples/servers/kit/api"
-	"github.com/NYTimes/gizmo/server/kit"
+	"github.com/darrenmcc/gizmo/examples/servers/kit/api"
+	"github.com/darrenmcc/gizmo/server/kit"
 	"github.com/kelseyhightower/envconfig"
 )
 

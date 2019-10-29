@@ -3,10 +3,10 @@ package service
 import (
 	"net/http"
 
-	"github.com/NYTimes/gizmo/server"
+	"github.com/darrenmcc/gizmo/server"
 	"github.com/NYTimes/gziphandler"
 
-	"github.com/NYTimes/gizmo/examples/nyt"
+	"github.com/darrenmcc/gizmo/examples/nyt"
 )
 
 type (

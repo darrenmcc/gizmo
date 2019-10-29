@@ -14,7 +14,7 @@ import (
 	"cloud.google.com/go/errorreporting"
 	"cloud.google.com/go/profiler"
 	sdpropagation "contrib.go.opencensus.io/exporter/stackdriver/propagation"
-	"github.com/NYTimes/gizmo/observe"
+	"github.com/darrenmcc/gizmo/observe"
 	"github.com/go-kit/kit/log"
 	httptransport "github.com/go-kit/kit/transport/http"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"

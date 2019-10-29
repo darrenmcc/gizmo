@@ -1,4 +1,4 @@
-package mysql // import "github.com/NYTimes/gizmo/config/mysql"
+package mysql // import "github.com/darrenmcc/gizmo/config/mysql"
 
 import (
 	"database/sql"

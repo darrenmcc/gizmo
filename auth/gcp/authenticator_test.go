@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/NYTimes/gizmo/auth"
+	"github.com/darrenmcc/gizmo/auth"
 	"github.com/go-kit/kit/log"
 	"golang.org/x/oauth2"
 )

@@ -3,7 +3,7 @@ package service
 import (
 	"net/http"
 
-	"github.com/NYTimes/gizmo/server"
+	"github.com/darrenmcc/gizmo/server"
 )
 
 func (s *MixedService) GetMostPopular(r *http.Request) (int, interface{}, error) {

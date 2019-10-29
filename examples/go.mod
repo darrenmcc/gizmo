@@ -1,10 +1,10 @@
-module github.com/NYTimes/gizmo/examples
+module github.com/darrenmcc/gizmo/examples
 
-replace github.com/NYTimes/gizmo => ../
+replace github.com/darrenmcc/gizmo => ../
 
 require (
 	cloud.google.com/go v0.38.0
-	github.com/NYTimes/gizmo v1.2.1
+	github.com/darrenmcc/gizmo v1.2.1
 	github.com/NYTimes/gziphandler v1.1.0
 	github.com/NYTimes/logrotate v1.0.0
 	github.com/NYTimes/sqliface v0.0.0-20180310195202-f8e6c8b78d37

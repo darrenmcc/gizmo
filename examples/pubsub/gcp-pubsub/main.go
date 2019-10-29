@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NYTimes/gizmo/examples/nyt"
-	"github.com/NYTimes/gizmo/pubsub"
-	"github.com/NYTimes/gizmo/pubsub/gcp"
+	"github.com/darrenmcc/gizmo/examples/nyt"
+	"github.com/darrenmcc/gizmo/pubsub"
+	"github.com/darrenmcc/gizmo/pubsub/gcp"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 )

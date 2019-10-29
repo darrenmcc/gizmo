@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/NYTimes/gizmo/examples/nyt"
-	"github.com/NYTimes/gizmo/pubsub/pubsubtest"
-	"github.com/NYTimes/gizmo/server"
+	"github.com/darrenmcc/gizmo/examples/nyt"
+	"github.com/darrenmcc/gizmo/pubsub/pubsubtest"
+	"github.com/darrenmcc/gizmo/server"
 	"github.com/golang/protobuf/proto"
 )
 

@@ -9,7 +9,7 @@ import (
 
 	ocontext "golang.org/x/net/context"
 
-	"github.com/NYTimes/gizmo/server/kit"
+	"github.com/darrenmcc/gizmo/server/kit"
 	"github.com/golang/protobuf/proto"
 )
 

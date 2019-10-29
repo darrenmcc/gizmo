@@ -1,11 +1,11 @@
-package kafka // import "github.com/NYTimes/gizmo/pubsub/kafka"
+package kafka // import "github.com/darrenmcc/gizmo/pubsub/kafka"
 
 import (
 	"errors"
 	"log"
 	"time"
 
-	"github.com/NYTimes/gizmo/pubsub"
+	"github.com/darrenmcc/gizmo/pubsub"
 
 	"github.com/Shopify/sarama"
 	"github.com/golang/protobuf/proto"

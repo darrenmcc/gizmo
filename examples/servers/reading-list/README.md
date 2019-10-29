@@ -15,7 +15,7 @@ A few highlights of this service worth calling out:
 * [gen-proto.sh](gen-proto.sh)
   * A script that relies on github.com/NYTimes/openapi2proto to generate a gRPC service spec with HTTP annotations from the Open API spec along with the Go/Cloud Endpoint stubs via protoc.
 * [service.go](service.go)
-  * The actual [kit.Service](http://godoc.org/github.com/NYTimes/gizmo/server/kit#Service) implementation.
+  * The actual [kit.Service](http://godoc.org/github.com/darrenmcc/gizmo/server/kit#Service) implementation.
 * [http_client.go](http_client.go)
   * A go-kit client for programmatically accessing the API via HTTP/JSON.
 * [cmd/cli/main.go](cmd/cli/main.go)

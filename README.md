@@ -1,4 +1,4 @@
-# Gizmo Microservice Toolkit [![GoDoc](https://godoc.org/github.com/NYTimes/gizmo?status.svg)](https://godoc.org/github.com/NYTimes/gizmo) [![Build Status](https://travis-ci.org/nytimes/gizmo.svg?branch=master)](https://travis-ci.org/nytimes/gizmo) [![Coverage Status](https://coveralls.io/repos/nytimes/gizmo/badge.svg?branch=master&service=github)](https://coveralls.io/github/nytimes/gizmo?branch=master)
+# Gizmo Microservice Toolkit [![GoDoc](https://godoc.org/github.com/darrenmcc/gizmo?status.svg)](https://godoc.org/github.com/darrenmcc/gizmo) [![Build Status](https://travis-ci.org/nytimes/gizmo.svg?branch=master)](https://travis-ci.org/nytimes/gizmo) [![Coverage Status](https://coveralls.io/repos/nytimes/gizmo/badge.svg?branch=master&service=github)](https://coveralls.io/github/nytimes/gizmo?branch=master)
 
 <p align="center">
   <img src="http://graphics8.nytimes.com/images/blogs/open/2015/gizmo.png"/>
@@ -18,24 +18,24 @@ This toolkit provides packages to put together server and pubsub daemons with th
 ### Install
 Notice the capitalization!
 
-`go get github.com/NYTimes/gizmo/...`
+`go get github.com/darrenmcc/gizmo/...`
 
 ### Import Path Change Notice
 The New York Times recently changed the github organization from `NYTimes` to `nytimes`. This should not affect the installation as long as you use the proper casing `NYTimes` and not `nytimes` per installation instructions above.
 
-However, the intention is to migrate the import paths to be consistent with how it's shown on GitHub. This will be a breaking change and we will introduce a major tag when we update the code. Therefore, the import path will go from `github.com/NYTimes/gizmo/server` to `github.com/nytimes/gizmo/v2/server`. This ensures that people will not have type-mismatches between import path changes.
+However, the intention is to migrate the import paths to be consistent with how it's shown on GitHub. This will be a breaking change and we will introduce a major tag when we update the code. Therefore, the import path will go from `github.com/darrenmcc/gizmo/server` to `github.com/nytimes/gizmo/v2/server`. This ensures that people will not have type-mismatches between import path changes.
 
 ### Packages
 
-#### [`server`](https://godoc.org/github.com/NYTimes/gizmo/server)
+#### [`server`](https://godoc.org/github.com/darrenmcc/gizmo/server)
 
 The `server` package is the bulk of the toolkit and relies on `server.Config` to manage `Server` implementations.
 
 It offers 1 server implementation:
 
-[`SimpleServer`](https://godoc.org/github.com/NYTimes/gizmo/server#SimpleServer), which is capable of handling basic HTTP and JSON requests via 5 of the available `Service` implementations: `SimpleService`, `JSONService`, `ContextService`, `MixedService` and a `MixedContextService`.
+[`SimpleServer`](https://godoc.org/github.com/darrenmcc/gizmo/server#SimpleServer), which is capable of handling basic HTTP and JSON requests via 5 of the available `Service` implementations: `SimpleService`, `JSONService`, `ContextService`, `MixedService` and a `MixedContextService`.
 
-#### [`server/kit`](https://godoc.org/github.com/NYTimes/gizmo/server/kit)
+#### [`server/kit`](https://godoc.org/github.com/darrenmcc/gizmo/server/kit)
 
 The `server/kit` package embodies Gizmo's goals to combine with go-kit.
 
@@ -49,21 +49,21 @@ The `server/kit` package embodies Gizmo's goals to combine with go-kit.
     * Services using this package are expected to deploy to GCP.
 
 
-#### [`observe`](https://godoc.org/github.com/NYTimes/gizmo/observe)
+#### [`observe`](https://godoc.org/github.com/darrenmcc/gizmo/observe)
 
 The `observe` package provides observability helpers for metrics and tracing through OpenCensus
 
 * `server/kit` (and soon SimpleServer) utilizes this package to create a StackDriver exporter with sane defaults
 * `GoogleProjectID` and `IsGAE` can help you make decisions about the underlying platform
 
-#### [`auth`](https://godoc.org/github.com/NYTimes/gizmo/auth)
+#### [`auth`](https://godoc.org/github.com/darrenmcc/gizmo/auth)
 
 The `auth` package provides primitives for verifying inbound authentication tokens:
 
 * The `PublicKeySource` interface is meant to provide `*rsa.PublicKeys` from JSON Web Key Sets.
 * The `Verifier` struct composes key source implementations with custom decoders and verifier functions to streamline server side token verification.
 
-#### [`auth/gcp`](https://godoc.org/github.com/NYTimes/gizmo/auth/gcp)
+#### [`auth/gcp`](https://godoc.org/github.com/darrenmcc/gizmo/auth/gcp)
 
 The `auth/gcp` package provides 2 Google Cloud Platform based `auth.PublicKeySource` and `oauth2.TokenSource` implementations:
 
@@ -73,35 +73,35 @@ The `auth/gcp` package provides 2 Google Cloud Platform based `auth.PublicKeySou
 The `auth/gcp` package also includes an `Authenticator`, which encapsulates a Google Identity verifier and [`oauth2`](https://godoc.org/golang.org/x/oauth2) credentials [to manage a basic web auth flow.](https://developers.google.com/identity/sign-in/web/backend-auth#verify-the-integrity-of-the-id-token)
 
 
-#### [`config`](https://godoc.org/github.com/NYTimes/gizmo/config)
+#### [`config`](https://godoc.org/github.com/darrenmcc/gizmo/config)
 
 The `config` package contains a handful of useful functions to load to configuration structs from JSON files or environment variables.
 
 There are also many structs for common configuration options and credentials of different Cloud Services and Databases.
 
-#### [`pubsub`](https://godoc.org/github.com/NYTimes/gizmo/pubsub)
+#### [`pubsub`](https://godoc.org/github.com/darrenmcc/gizmo/pubsub)
 
 The `pubsub` package contains two (`publisher` and `subscriber`) generic interfaces for publishing data to queues as well as subscribing and consuming data from those queues.
 
 There are 4 implementations of `pubsub` interfaces:
 
-* For pubsub via Amazon's SNS/SQS, you can use the [`pubsub/aws`](https://godoc.org/github.com/NYTimes/gizmo/pubsub/aws) package
+* For pubsub via Amazon's SNS/SQS, you can use the [`pubsub/aws`](https://godoc.org/github.com/darrenmcc/gizmo/pubsub/aws) package
 
-* For pubsub via Google's Pubsub, you can use the [`pubsub/gcp`](https://godoc.org/github.com/NYTimes/gizmo/pubsub/gcp) package
+* For pubsub via Google's Pubsub, you can use the [`pubsub/gcp`](https://godoc.org/github.com/darrenmcc/gizmo/pubsub/gcp) package
 
-* For pubsub via Kafka topics, you can use the [`pubsub/kafka`](https://godoc.org/github.com/NYTimes/gizmo/pubsub/kafka) package
+* For pubsub via Kafka topics, you can use the [`pubsub/kafka`](https://godoc.org/github.com/darrenmcc/gizmo/pubsub/kafka) package
 
-* For publishing via HTTP, you can use the [`pubsub/http`](https://godoc.org/github.com/NYTimes/gizmo/pubsub/http) package
+* For publishing via HTTP, you can use the [`pubsub/http`](https://godoc.org/github.com/darrenmcc/gizmo/pubsub/http) package
 
 
-#### [`pubsub/pubsubtest`](https://godoc.org/github.com/NYTimes/gizmo/pubsub/pubsubtest)
+#### [`pubsub/pubsubtest`](https://godoc.org/github.com/darrenmcc/gizmo/pubsub/pubsubtest)
 
 The `pubsub/pubsubtest` package contains test implementations of the `pubsub.Publisher`, `pubsub.MultiPublisher`, and `pubsub.Subscriber` interfaces that will allow developers to easily mock out and test their `pubsub` implementations.
 
 #### Examples
 
-* Several reference implementations utilizing `server` and `pubsub` are available in the [`examples`](https://github.com/NYTimes/gizmo/tree/master/examples) subdirectory.
-* There are also examples within the GoDoc: [here](https://godoc.org/github.com/NYTimes/gizmo/examples)
+* Several reference implementations utilizing `server` and `pubsub` are available in the [`examples`](https://github.com/darrenmcc/gizmo/tree/master/examples) subdirectory.
+* There are also examples within the GoDoc: [here](https://godoc.org/github.com/darrenmcc/gizmo/examples)
 
 <sub><strong>If you experience any issues please create an issue and/or reach out on the #gizmo channel in the [Gophers Slack Workspace](https://invite.slack.golangbridge.org) with what you've found.</strong></sub>
 

@@ -1,4 +1,4 @@
-package aws // import "github.com/NYTimes/gizmo/pubsub/aws"
+package aws // import "github.com/darrenmcc/gizmo/pubsub/aws"
 
 import (
 	"encoding/base64"
@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/NYTimes/gizmo/pubsub"
+	"github.com/darrenmcc/gizmo/pubsub"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"

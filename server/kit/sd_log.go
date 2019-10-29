@@ -10,7 +10,7 @@ import (
 
 	"cloud.google.com/go/logging"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
-	"github.com/NYTimes/gizmo/observe"
+	"github.com/darrenmcc/gizmo/observe"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"

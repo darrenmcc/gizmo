@@ -1,4 +1,4 @@
-package aws // import "github.com/NYTimes/gizmo/config/aws"
+package aws // import "github.com/darrenmcc/gizmo/config/aws"
 
 import (
 	"fmt"

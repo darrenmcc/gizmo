@@ -3,8 +3,8 @@ package service
 import (
 	"net/http"
 
-	"github.com/NYTimes/gizmo/pubsub/kafka"
-	"github.com/NYTimes/gizmo/server"
+	"github.com/darrenmcc/gizmo/pubsub/kafka"
+	"github.com/darrenmcc/gizmo/server"
 )
 
 // StreamService offers three endpoints: one to create a new topic in
