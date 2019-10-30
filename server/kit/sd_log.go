@@ -5,6 +5,7 @@ import (
 	"encoding"
 	"encoding/json"
 	"fmt"
+	stdlog "log"
 	"reflect"
 	"strings"
 
@@ -44,7 +45,7 @@ func newStackdriverLogger(ctx context.Context, logID, projectID, service, versio
 		// resource.Labels["revision_name"] = version
 		// resource.Labels["configuration_name"] = config
 		if logID == "" {
-			logID = "app_logs"
+			logID = "stdout"
 		}
 	} else if mr := monitoredresource.Autodetect(); mr != nil {
 		typ, lbls := mr.MonitoredResource()
@@ -90,6 +91,8 @@ func (l sdLogger) Log(keyvals ...interface{}) error {
 	case level.WarnValue():
 		svrty = logging.Warning
 	}
+
+	stdlog.Printf("svrty: %v", svrty)
 
 	payload, err := json.Marshal(kvs)
 	if err != nil {
