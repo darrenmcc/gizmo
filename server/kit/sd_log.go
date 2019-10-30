@@ -44,7 +44,7 @@ func newStackdriverLogger(ctx context.Context, logID, projectID, service, versio
 		// resource.Labels["revision_name"] = version
 		// resource.Labels["configuration_name"] = config
 		if logID == "" {
-			logID = "stdout"
+			logID = "app_logs"
 		}
 	} else if mr := monitoredresource.Autodetect(); mr != nil {
 		typ, lbls := mr.MonitoredResource()
