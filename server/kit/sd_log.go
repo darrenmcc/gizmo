@@ -38,14 +38,12 @@ func newStackdriverLogger(ctx context.Context, logID, projectID, service, versio
 			logID = "app_logs"
 		}
 	} else if observe.IsRun() {
-		resource.Type = "cloud_run_revision"
+		// resource.Type = "cloud_run_revision"
 		// service, version, config := observe.GetRunInfo()
 		// resource.Labels["service_name"] = service
 		// resource.Labels["revision_name"] = version
 		// resource.Labels["configuration_name"] = config
-		if logID == "" {
-			logID = "stdout"
-		}
+
 	} else if mr := monitoredresource.Autodetect(); mr != nil {
 		typ, lbls := mr.MonitoredResource()
 		for f, v := range lbls {
