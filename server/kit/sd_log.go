@@ -5,7 +5,6 @@ import (
 	"encoding"
 	"encoding/json"
 	"fmt"
-	stdlog "log"
 	"reflect"
 	"strings"
 
@@ -91,8 +90,6 @@ func (l sdLogger) Log(keyvals ...interface{}) error {
 	case level.WarnValue():
 		svrty = logging.Warning
 	}
-
-	stdlog.Printf("svrty: %v", svrty)
 
 	payload, err := json.Marshal(kvs)
 	if err != nil {
