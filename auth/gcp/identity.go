@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/NYTimes/gizmo/auth"
+	"github.com/darrenmcc/gizmo/auth"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/jws"

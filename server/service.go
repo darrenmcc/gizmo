@@ -1,107 +1,98 @@
-package server
+package kit
 
 import (
-	"context"
 	"net/http"
 
 	"google.golang.org/grpc"
+
+	"github.com/go-kit/kit/endpoint"
+	httptransport "github.com/go-kit/kit/transport/http"
 )
 
-// Service is the most basic interface of a service that can be received and
-// hosted by a Server.
+// HTTPEndpoint encapsulates everything required to build
+// an endpoint hosted on a kit server.
+type HTTPEndpoint struct {
+	Endpoint endpoint.Endpoint
+	Decoder  httptransport.DecodeRequestFunc
+	Encoder  httptransport.EncodeResponseFunc
+	Options  []httptransport.ServerOption
+}
+
+// Service is the interface of mixed HTTP/gRPC that can be registered and
+// hosted by a gizmo/server/kit server. Services provide hooks for service-wide options
+// and middlewares and can be used as a means of dependency injection.
+// In general, a Service should just contain the logic for deserializing and authorizing
+// requests, passing the request to a business logic interface abstraction,
+// handling errors and serializing the apprioriate response.
+//
+// In other words, each Endpoint is similar to a 'controller' and the Service
+// a container for injecting dependencies (business services, repositories, etc.)
+// into each request handler.
 type Service interface {
-	Prefix() string
+	// Middleware is for any service-wide go-kit middlewares. This middleware
+	// is applied to both HTTP and gRPC services.
+	Middleware(endpoint.Endpoint) endpoint.Endpoint
 
-	// Middleware is a hook to enable services to add
-	// any additional middleware.
-	Middleware(http.Handler) http.Handler
+	// HTTPMiddleware is for service-wide http specific middleware.
+	HTTPMiddleware(http.Handler) http.Handler
+
+	// HTTPOptions are service-wide go-kit HTTP server options.
+	HTTPOptions() []httptransport.ServerOption
+
+	// HTTPRouterOptions allows users to override the default
+	// behavior and use of the GorillaRouter.
+	HTTPRouterOptions() []RouterOption
+
+	// HTTPEndpoints default to using a JSON serializer if no encoder is provided.
+	// For example:
+	//
+	//    return map[string]map[string]kit.HTTPEndpoint{
+	//        "/cat/{id}": {
+	//            "GET": {
+	//                Endpoint: s.GetCatByID,
+	//                Decoder:  decodeGetCatRequest,
+	//            },
+	//        },
+	//        "/cats": {
+	//            "PUT": {
+	//                Endpoint: s.PutCats,
+	//                HTTPDecoder:  decodePutCatsProtoRequest,
+	//            },
+	//            "GET": {
+	//                Endpoint: s.GetCats,
+	//                HTTPDecoder:  decodeGetCatsRequest,
+	//            },
+	//        },
+	//  }
+	HTTPEndpoints() map[string]map[string]HTTPEndpoint
+
+	// RPCMiddleware is for any service-wide gRPC specific middleware
+	// for easy integration with 3rd party grpc.UnaryServerInterceptors like
+	// http://godoc.org/cloud.google.com/go/trace#Client.GRPCServerInterceptor
+	//
+	// The underlying kit server already uses the one available grpc.UnaryInterceptor
+	// grpc.ServerOption so attempting to pass your own in this Service's RPCOptions()
+	// will cause a panic at startup.
+	//
+	// If you want to apply multiple RPC middlewares,
+	// we recommend using:
+	// http://godoc.org/github.com/grpc-ecosystem/go-grpc-middleware#ChainUnaryServer
+	RPCMiddleware() grpc.UnaryServerInterceptor
+
+	// RPCServiceDesc allows services to declare an alternate gRPC
+	// representation of themselves to be hosted on the RPC_PORT (8081 by default).
+	RPCServiceDesc() *grpc.ServiceDesc
+
+	// RPCOptions are for service-wide gRPC server options.
+	//
+	// The underlying kit server already uses the one available grpc.UnaryInterceptor
+	// grpc.ServerOption so attempting to pass your own in this method will cause a panic
+	// at startup. We recommend using RPCMiddleware() to fill this need.
+	RPCOptions() []grpc.ServerOption
 }
 
-// SimpleService is an interface defining a service that
-// is made up of http.HandlerFuncs.
-type SimpleService interface {
-	Service
-
-	// route - method - func
-	Endpoints() map[string]map[string]http.HandlerFunc
-}
-
-// JSONService is an interface defining a service that
-// is made up of JSONEndpoints.
-type JSONService interface {
-	Service
-
-	// Ensure that the route syntax is compatible with the router
-	// implementation chosen in cfg.RouterType.
-	// route - method - func
-	JSONEndpoints() map[string]map[string]JSONEndpoint
-	JSONMiddleware(JSONEndpoint) JSONEndpoint
-}
-
-// MixedService is an interface defining service that
-// offer JSONEndpoints and simple http.HandlerFunc endpoints.
-type MixedService interface {
-	Service
-
-	// route - method - func
-	Endpoints() map[string]map[string]http.HandlerFunc
-
-	// Ensure that the route syntax is compatible with the router
-	// implementation chosen in cfg.RouterType.
-	// route - method - func
-	JSONEndpoints() map[string]map[string]JSONEndpoint
-	JSONMiddleware(JSONEndpoint) JSONEndpoint
-}
-
-// RPCService is an interface defining an grpc-compatible service that
-// also offers JSONContextEndpoints and ContextHandlerFuncs.
-type RPCService interface {
-	ContextService
-
-	Service() (*grpc.ServiceDesc, interface{})
-
-	// Ensure that the route syntax is compatible with the router
-	// implementation chosen in cfg.RouterType.
-	// route - method - func
-	JSONEndpoints() map[string]map[string]JSONContextEndpoint
-	JSONMiddleware(JSONContextEndpoint) JSONContextEndpoint
-}
-
-// JSONEndpoint is the JSONService equivalent to SimpleService's http.HandlerFunc.
-type JSONEndpoint func(*http.Request) (int, interface{}, error)
-
-// ContextService is an interface defining a service that
-// is made up of ContextHandlerFuncs.
-type ContextService interface {
-	Service
-
-	// route - method - func
-	ContextEndpoints() map[string]map[string]ContextHandlerFunc
-	ContextMiddleware(ContextHandler) ContextHandler
-}
-
-// MixedContextService is an interface defining a service that
-// is made up of JSONContextEndpoints and ContextHandlerFuncs.
-type MixedContextService interface {
-	ContextService
-
-	// route - method - func
-	JSONEndpoints() map[string]map[string]JSONContextEndpoint
-	JSONContextMiddleware(JSONContextEndpoint) JSONContextEndpoint
-}
-
-// JSONContextEndpoint is the JSONContextService equivalent to JSONService's JSONEndpoint.
-type JSONContextEndpoint func(context.Context, *http.Request) (int, interface{}, error)
-
-// ContextHandlerFunc is an equivalent to SimpleService's http.HandlerFunc.
-type ContextHandlerFunc func(context.Context, http.ResponseWriter, *http.Request)
-
-// ServeHTTPContext is an implementation of ContextHandler interface.
-func (h ContextHandlerFunc) ServeHTTPContext(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
-	h(ctx, rw, req)
-}
-
-// ContextHandler is an equivalent to http.Handler but with additional param.
-type ContextHandler interface {
-	ServeHTTPContext(context.Context, http.ResponseWriter, *http.Request)
+// Shutdowner allows your service to shutdown gracefully when http server stops.
+// This may used when service has any background task which needs to be completed gracefully.
+type Shutdowner interface {
+	Shutdown()
 }

@@ -1,4 +1,4 @@
-package auth // import "github.com/NYTimes/gizmo/auth"
+package auth // import "github.com/darrenmcc/gizmo/auth"
 
 import (
 	"context"
