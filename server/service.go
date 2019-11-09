@@ -33,11 +33,10 @@ type Service interface {
 	// is applied to both HTTP and gRPC services.
 	Middleware(endpoint.Endpoint) endpoint.Endpoint
 
-	// HTTPMiddleware is for service-wide http specific middleware
-	// for easy integration with 3rd party http.Handlers like nytimes/gziphandler.
+	// HTTPMiddleware is for service-wide http specific middleware.
 	HTTPMiddleware(http.Handler) http.Handler
 
-	// HTTPOptions are service-wide go-kit HTTP server options
+	// HTTPOptions are service-wide go-kit HTTP server options.
 	HTTPOptions() []httptransport.ServerOption
 
 	// HTTPRouterOptions allows users to override the default
