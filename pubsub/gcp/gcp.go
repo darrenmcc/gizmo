@@ -1,4 +1,4 @@
-package gcp // import "github.com/NYTimes/gizmo/pubsub/gcp"
+package gcp // import "github.com/darrenmcc/gizmo/pubsub/gcp"
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"time"
 
 	gpubsub "cloud.google.com/go/pubsub"
-	"github.com/NYTimes/gizmo/pubsub"
+	"github.com/darrenmcc/gizmo/pubsub"
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/api/option"

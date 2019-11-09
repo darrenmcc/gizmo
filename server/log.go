@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/NYTimes/gizmo/observe"
+	"github.com/darrenmcc/gizmo/observe"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/go-kit/kit/transport/http"

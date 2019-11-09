@@ -13,7 +13,7 @@ import (
 	"time"
 
 	kms "cloud.google.com/go/kms/apiv1"
-	"github.com/NYTimes/gizmo/auth"
+	"github.com/darrenmcc/gizmo/auth"
 	"github.com/go-kit/kit/log"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"

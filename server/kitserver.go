@@ -14,7 +14,7 @@ import (
 	"cloud.google.com/go/errorreporting"
 	"cloud.google.com/go/profiler"
 	sdpropagation "contrib.go.opencensus.io/exporter/stackdriver/propagation"
-	"github.com/NYTimes/gizmo/observe"
+	"github.com/darrenmcc/gizmo/observe"
 	"github.com/go-kit/kit/log"
 	httptransport "github.com/go-kit/kit/transport/http"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -191,8 +191,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := httptransport.PopulateRequestContext(r.Context(), r)
 
 	// add google trace header to use in tracing and logging
-	ctx = context.WithValue(ctx, ContextKeyCloudTraceContext,
-		r.Header.Get("X-Cloud-Trace-Context"))
+	ctx = context.WithValue(ctx, ContextKeyCloudTraceContext, r.Header.Get("X-Cloud-Trace-Context"))
 
 	// add a request scoped logger to the context
 	ctx = SetLogger(ctx, AddLogKeyVals(ctx, s.logger))
@@ -267,33 +266,34 @@ func (s *Server) register(svc Service) {
 	}
 
 	// add all pprof endpoints by default to HTTP
-	registerPprof(s.cfg, s.mux)
+	if s.cfg.EnablePProf {
+		registerPprof(s.mux)
+	}
 
 	gdesc := svc.RPCServiceDesc()
-	if gdesc == nil {
-		return
-	}
+	if gdesc != nil {
+		inters := []grpc.UnaryServerInterceptor{
+			grpc.UnaryServerInterceptor(
+				// inject logger into gRPC server and hook in go-kit middleware
+				func(ctx ocontext.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+					ctx = context.WithValue(ctx, logKey, AddLogKeyVals(ctx, s.logger))
+					return svc.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+						return handler(ctx, req)
+					})(ctx, req)
+				},
+			),
+		}
+		if mw := svc.RPCMiddleware(); mw != nil {
+			inters = append(inters, mw)
+		}
+		opts := append(
+			svc.RPCOptions(),
+			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(inters...)),
+			grpc.StatsHandler(&ocgrpc.ServerHandler{}))
+		s.gsvr = grpc.NewServer(opts...)
 
-	inters := []grpc.UnaryServerInterceptor{
-		grpc.UnaryServerInterceptor(
-			// inject logger into gRPC server and hook in go-kit middleware
-			func(ctx ocontext.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-				ctx = context.WithValue(ctx, logKey, AddLogKeyVals(ctx, s.logger))
-				return svc.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-					return handler(ctx, req)
-				})(ctx, req)
-			},
-		),
+		s.gsvr.RegisterService(gdesc, svc)
 	}
-	if mw := svc.RPCMiddleware(); mw != nil {
-		inters = append(inters, mw)
-	}
-
-	s.gsvr = grpc.NewServer(append(svc.RPCOptions(),
-		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(inters...)),
-		grpc.StatsHandler(&ocgrpc.ServerHandler{}))...)
-
-	s.gsvr.RegisterService(gdesc, svc)
 }
 
 func okEndpoint(ctx context.Context, _ interface{}) (interface{}, error) {
@@ -383,10 +383,7 @@ func (s *Server) stop() error {
 	return <-ch
 }
 
-func registerPprof(cfg Config, mx Router) {
-	if !cfg.EnablePProf {
-		return
-	}
+func registerPprof(mx Router) {
 	mx.HandleFunc(http.MethodGet, "/debug/pprof/", pprof.Index)
 	mx.HandleFunc(http.MethodGet, "/debug/pprof/cmdline", pprof.Cmdline)
 	mx.HandleFunc(http.MethodGet, "/debug/pprof/profile", pprof.Profile)
