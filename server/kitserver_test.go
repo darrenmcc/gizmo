@@ -17,8 +17,7 @@ import (
 	ocontext "golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	gserver "github.com/NYTimes/gizmo/server"
-	"github.com/NYTimes/gizmo/server/kit"
+	"github.com/darrenmcc/gizmo/kit"
 )
 
 func TestKitServerHTTPMiddleware(t *testing.T) {
@@ -167,7 +166,7 @@ func (s *server) Middleware(e endpoint.Endpoint) endpoint.Endpoint {
 func (s *server) HTTPMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		kit.LogDebug(r.Context(), "logging in the HTTP middleware!")
-		gserver.CORSHandler(h, "").ServeHTTP(w, r)
+		kit.CORSHandler(h, "").ServeHTTP(w, r)
 	})
 }
 

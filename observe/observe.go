@@ -1,7 +1,7 @@
 // Package observe provides functions
 // that help with setting tracing/metrics
 // in cloud providers, mainly GCP.
-package observe // import "github.com/NYTimes/gizmo/observe"
+package observe // import "github.com/darrenmcc/gizmo/observe"
 
 import (
 	"context"
