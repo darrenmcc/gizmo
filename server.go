@@ -1,4 +1,4 @@
-package gizmo // import "github.com/darrenmcc/gizmo/server/kit"
+package gizmo
 
 import (
 	"os"
