@@ -7,9 +7,9 @@ require (
 	cloud.google.com/go/logging v1.0.0
 	cloud.google.com/go/pubsub v1.0.1
 	contrib.go.opencensus.io/exporter/stackdriver v0.12.8
-	github.com/NYTimes/gizmo v1.3.3
 	github.com/aws/aws-sdk-go v1.25.31 // indirect
 	github.com/go-kit/kit v0.9.0
+	github.com/go-logfmt/logfmt v0.4.0 // indirect
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/golang/protobuf v1.3.2
 	github.com/google/go-cmp v0.3.1
