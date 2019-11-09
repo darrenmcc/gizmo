@@ -11,7 +11,7 @@ It has these top-level messages:
 	GetCatNameRequest
 	Cat
 */
-package kit_test
+package kit
 
 import (
 	fmt "fmt"

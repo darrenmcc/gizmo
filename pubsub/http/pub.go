@@ -1,4 +1,4 @@
-package http // import "github.com/NYTimes/gizmo/pubsub/http"
+package http // import "github.com/darrenmcc/gizmo/pubsub/http"
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/NYTimes/gizmo/pubsub"
+	"github.com/darrenmcc/gizmo/pubsub"
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 )

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/NYTimes/gizmo/pubsub"
+	"github.com/darrenmcc/gizmo/pubsub"
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 )
