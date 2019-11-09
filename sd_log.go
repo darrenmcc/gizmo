@@ -1,4 +1,4 @@
-package kit
+package gizmo
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 
 	"cloud.google.com/go/logging"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
-	"github.com/darrenmcc/gizmo/observe"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
@@ -32,7 +31,7 @@ func newStackdriverLogger(ctx context.Context, logID, projectID, service, versio
 			"version_id": version,
 		},
 	}
-	if observe.IsGAE() {
+	if IsGAE() {
 		resource.Type = "gae_app"
 		if logID == "" {
 			logID = "app_logs"

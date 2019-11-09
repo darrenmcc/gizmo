@@ -1,5 +1,5 @@
 // Package kit implements an opinionated server based on go-kit primitives.
-package kit
+package gizmo
 
 import (
 	"context"
@@ -14,7 +14,6 @@ import (
 	"cloud.google.com/go/errorreporting"
 	"cloud.google.com/go/profiler"
 	sdpropagation "contrib.go.opencensus.io/exporter/stackdriver/propagation"
-	"github.com/darrenmcc/gizmo/observe"
 	"github.com/go-kit/kit/log"
 	httptransport "github.com/go-kit/kit/transport/http"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -96,13 +95,13 @@ func NewServer(svc Service) *Server {
 		propr propagation.HTTPFormat
 	)
 
-	projectID, svcName, svcVersion := observe.GetServiceInfo()
+	projectID, svcName, svcVersion := GetServiceInfo()
 	onErr := func(err error) {
 		lg.Log("error", err, "message", "exporter client encountered an error")
 	}
 	ocFlush := func() {}
-	if !observe.SkipObserve() && observe.IsGCPEnabled() {
-		exp, err := observe.NewStackdriverExporter(projectID, onErr)
+	if !SkipObserve() && IsGCPEnabled() {
+		exp, err := NewStackdriverExporter(projectID, onErr)
 		if err != nil {
 			lg.Log("error", err,
 				"message", "unable to initiate error tracing exporter")

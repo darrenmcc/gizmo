@@ -1,11 +1,10 @@
-package kit
+package gizmo
 
 import (
 	"context"
 	"fmt"
 	"os"
 
-	"github.com/darrenmcc/gizmo/observe"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/go-kit/kit/transport/http"
@@ -29,10 +28,10 @@ import (
 // the observe.SkipObserve() function and will use a basic JSON logger writing to
 // stdout if set.
 func NewLogger(ctx context.Context, logID string) (log.Logger, func() error, error) {
-	if observe.SkipObserve() {
+	if SkipObserve() {
 		return newJSONLogger(), func() error { return nil }, nil
 	}
-	projectID, serviceID, svcVersion := observe.GetServiceInfo()
+	projectID, serviceID, svcVersion := GetServiceInfo()
 
 	lg, cl, err := newStackdriverLogger(ctx, logID, projectID, serviceID, svcVersion)
 	if err != nil {
