@@ -160,12 +160,8 @@ func NewServer(svc Service) *Server {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if x := recover(); x != nil {
-			var err error
-			if e, ok := x.(error); ok {
-				err = e
-			}
 
-			s.logger.Log("error", err, "message", "the server encountered a panic", "stacktrace", string(debug.Stack()))
+			s.logger.Log("error", x, "message", "the server encountered a panic", "stacktrace", string(debug.Stack()))
 
 			w.WriteHeader(http.StatusInternalServerError)
 			_, werr := w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
@@ -176,6 +172,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			// if we have an error client, send out a report
 			if s.errs == nil {
 				return
+			}
+
+			var err error
+			e, ok := x.(error)
+			if ok {
+				err = e
 			}
 
 			s.errs.Report(errorreporting.Entry{
