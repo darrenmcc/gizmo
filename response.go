@@ -92,6 +92,22 @@ func (c *JSONStatusResponse) Error() string {
 	return http.StatusText(c.code)
 }
 
+func NewErrorStatusResponse(err string, code int) *ErrorStatusResponse {
+	return &ErrorStatusResponse{err: err, code: code}
+}
+
+type ErrorStatusResponse struct {
+	code int
+	err  string
+}
+
+func (c *ErrorStatusResponse) Error() string {
+	return c.err
+}
+func (c *ErrorStatusResponse) StatusCode() int {
+	return c.code
+}
+
 // EncodeProtoResponse is an httptransport.EncodeResponseFunc that serializes the response
 // as Protobuf. Many Proto-over-HTTP services can use it as a sensible default. If the
 // response implements Headerer, the provided headers will be applied to the response.
