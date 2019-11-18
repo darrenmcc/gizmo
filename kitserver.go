@@ -103,8 +103,7 @@ func NewServer(svc Service) *Server {
 	if !SkipObserve() && IsGCPEnabled() {
 		exp, err := NewStackdriverExporter(projectID, onErr)
 		if err != nil {
-			lg.Log("error", err,
-				"message", "unable to initiate error tracing exporter")
+			lg.Log("error", err, "message", "unable to initiate error tracing exporter")
 		}
 		ocFlush = exp.Flush
 		trace.RegisterExporter(exp)
@@ -116,13 +115,11 @@ func NewServer(svc Service) *Server {
 			ServiceName:    svcName,
 			ServiceVersion: svcVersion,
 			OnError: func(err error) {
-				lg.Log("error", err,
-					"message", "error reporting client encountered an error")
+				lg.Log("error", err, "message", "error reporting client encountered an error")
 			},
 		})
 		if err != nil {
-			lg.Log("error", err,
-				"message", "unable to initiate error reporting client")
+			lg.Log("error", err, "message", "unable to initiate error reporting client")
 		}
 
 		err = profiler.Start(profiler.Config{
@@ -131,8 +128,7 @@ func NewServer(svc Service) *Server {
 			ServiceVersion: svcVersion,
 		})
 		if err != nil {
-			lg.Log("error", err,
-				"message", "unable to initiate profiling client")
+			lg.Log("error", err, "message", "unable to initiate profiling client")
 		}
 	}
 
@@ -160,8 +156,10 @@ func NewServer(svc Service) *Server {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if x := recover(); x != nil {
-
-			s.logger.Log("error", x, "message", "the server encountered a panic", "stacktrace", string(debug.Stack()))
+			s.logger.Log(
+				"error", x,
+				"message", "the server encountered a panic",
+				"stacktrace", string(debug.Stack()))
 
 			w.WriteHeader(http.StatusInternalServerError)
 			_, werr := w.Write([]byte(http.StatusText(http.StatusInternalServerError)))
