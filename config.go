@@ -72,13 +72,13 @@ func loadConfig() Config {
 		cfg.MaxHeaderBytes = 1 << 20
 	}
 	if cfg.ReadTimeout.Nanoseconds() == 0 {
-		cfg.ReadTimeout = 10 * time.Second
+		cfg.ReadTimeout = 60 * time.Second
+	}
+	if cfg.WriteTimeout.Nanoseconds() == 0 {
+		cfg.WriteTimeout = 60 * time.Second
 	}
 	if cfg.IdleTimeout.Nanoseconds() == 0 {
 		cfg.IdleTimeout = 120 * time.Second
-	}
-	if cfg.WriteTimeout.Nanoseconds() == 0 {
-		cfg.WriteTimeout = 10 * time.Second
 	}
 	if cfg.GOMAXPROCS > 0 {
 		runtime.GOMAXPROCS(cfg.GOMAXPROCS)
