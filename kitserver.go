@@ -31,19 +31,13 @@ type Server struct {
 	logger   log.Logger
 	logClose func() error
 	ocFlush  func()
-
-	errs *errorreporting.Client
-
-	mux Router
-
-	cfg Config
-
-	svc Service
-
-	svr  *http.Server
-	gsvr *grpc.Server
-
-	handler http.Handler
+	errs     *errorreporting.Client
+	mux      Router
+	cfg      Config
+	svc      Service
+	svr      *http.Server
+	gsvr     *grpc.Server
+	handler  http.Handler
 
 	// exit chan for graceful shutdown
 	exit chan chan error
