@@ -23,7 +23,6 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 	"go.opencensus.io/trace/propagation"
-	ocontext "golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
@@ -100,40 +99,39 @@ func NewServer(svc Service) *Server {
 		lg.Log("error", err, "message", "exporter client encountered an error")
 	}
 	ocFlush := func() {}
-	if !SkipObserve() && IsGCPEnabled() {
-		exp, err := NewStackdriverExporter(projectID, onErr)
-		if err != nil {
-			lg.Log("error", err,
-				"message", "unable to initiate error tracing exporter")
-		}
-		ocFlush = exp.Flush
-		trace.RegisterExporter(exp)
-		view.RegisterExporter(exp)
 
-		propr = &sdpropagation.HTTPFormat{}
+	exp, err := NewStackdriverExporter(projectID, onErr)
+	if err != nil {
+		lg.Log("error", err,
+			"message", "unable to initiate error tracing exporter")
+	}
+	ocFlush = exp.Flush
+	trace.RegisterExporter(exp)
+	view.RegisterExporter(exp)
 
-		errs, err = errorreporting.NewClient(ctx, projectID, errorreporting.Config{
-			ServiceName:    svcName,
-			ServiceVersion: svcVersion,
-			OnError: func(err error) {
-				lg.Log("error", err,
-					"message", "error reporting client encountered an error")
-			},
-		})
-		if err != nil {
-			lg.Log("error", err,
-				"message", "unable to initiate error reporting client")
-		}
+	propr = &sdpropagation.HTTPFormat{}
 
-		err = profiler.Start(profiler.Config{
-			ProjectID:      projectID,
-			Service:        svcName,
-			ServiceVersion: svcVersion,
-		})
-		if err != nil {
+	errs, err = errorreporting.NewClient(ctx, projectID, errorreporting.Config{
+		ServiceName:    svcName,
+		ServiceVersion: svcVersion,
+		OnError: func(err error) {
 			lg.Log("error", err,
-				"message", "unable to initiate profiling client")
-		}
+				"message", "error reporting client encountered an error")
+		},
+	})
+	if err != nil {
+		lg.Log("error", err,
+			"message", "unable to initiate error reporting client")
+	}
+
+	err = profiler.Start(profiler.Config{
+		ProjectID:      projectID,
+		Service:        svcName,
+		ServiceVersion: svcVersion,
+	})
+	if err != nil {
+		lg.Log("error", err,
+			"message", "unable to initiate profiling client")
 	}
 
 	s := &Server{
@@ -146,7 +144,10 @@ func NewServer(svc Service) *Server {
 		errs:     errs,
 	}
 	s.svr = &http.Server{
-		Handler:        &ochttp.Handler{Handler: s, Propagation: propr},
+		Handler: &ochttp.Handler{
+			Handler:     s,
+			Propagation: propr,
+		},
 		Addr:           fmt.Sprintf("%s:%d", cfg.HTTPAddr, cfg.HTTPPort),
 		MaxHeaderBytes: cfg.MaxHeaderBytes,
 		ReadTimeout:    cfg.ReadTimeout,
@@ -276,7 +277,7 @@ func (s *Server) register(svc Service) {
 		inters := []grpc.UnaryServerInterceptor{
 			grpc.UnaryServerInterceptor(
 				// inject logger into gRPC server and hook in go-kit middleware
-				func(ctx ocontext.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+				func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 					ctx = context.WithValue(ctx, logKey, AddLogKeyVals(ctx, s.logger))
 					return svc.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 						return handler(ctx, req)
