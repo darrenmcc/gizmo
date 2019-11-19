@@ -319,32 +319,28 @@ func (s *Server) start() error {
 		}
 	}()
 
-	s.logger.Log("message",
-		fmt.Sprintf("listening on HTTP port: %d", s.cfg.HTTPPort))
+	s.logger.Log("message", fmt.Sprintf("listening on HTTP port: %d", s.cfg.HTTPPort))
 
 	if s.gsvr != nil {
-		gaddr := fmt.Sprintf(":%d", s.cfg.RPCPort)
-		lis, err := net.Listen("tcp", gaddr)
+		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.cfg.RPCPort))
 		if err != nil {
 			return errors.Wrap(err, "failed to listen to RPC port")
 		}
 
 		go func() {
 			err := s.gsvr.Serve(lis)
-			// the gRPC server _always_ returns non-nil
-			// this filters out the known err we don't care about logging
-			if (err != nil) && strings.Contains(err.Error(), "use of closed network connection") {
-				err = nil
-			}
 			if err != nil {
-				s.logger.Log(
-					"error", err,
-					"message", "gRPC server error - initiating shutting down")
-				s.stop()
+				// the gRPC server _always_ returns non-nil
+				// this filters out the known err we don't care about logging
+				if !strings.Contains(err.Error(), "use of closed network connection") {
+					s.logger.Log(
+						"error", err,
+						"message", "gRPC server error - initiating shutting down")
+					s.stop()
+				}
 			}
 		}()
-		s.logger.Log("message",
-			fmt.Sprintf("listening on RPC port: %d", s.cfg.RPCPort))
+		s.logger.Log("message", fmt.Sprintf("listening on RPC port: %d", s.cfg.RPCPort))
 	}
 
 	go func() {

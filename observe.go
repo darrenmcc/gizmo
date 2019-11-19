@@ -112,12 +112,6 @@ func getSDOpts(projectID, service, version string, onErr func(err error)) *stack
 	}
 }
 
-// IsGCPEnabled returns whether the running application
-// is inside GCP or has access to its products.
-func IsGCPEnabled() bool {
-	return IsGAE() || IsCloudRun() || monitoredresource.Autodetect() != nil
-}
-
 // SkipObserve checks if the GIZMO_SKIP_OBSERVE environment variable has been populated.
 // This may be used along with local development to cut down on long startup times caused
 // by the 'monitoredresource.Autodetect()' call in IsGCPEnabled().
