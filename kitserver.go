@@ -99,7 +99,6 @@ func NewServer(svc Service) *Server {
 		lg.Log("error", err, "message", "exporter client encountered an error")
 	}
 	ocFlush := func() {}
-<<<<<<< HEAD
 
 	exp, err := NewStackdriverExporter(projectID, onErr)
 	if err != nil {
@@ -133,38 +132,6 @@ func NewServer(svc Service) *Server {
 	if err != nil {
 		lg.Log("error", err,
 			"message", "unable to initiate profiling client")
-=======
-	if !SkipObserve() && IsGCPEnabled() {
-		exp, err := NewStackdriverExporter(projectID, onErr)
-		if err != nil {
-			lg.Log("error", err, "message", "unable to initiate error tracing exporter")
-		}
-		ocFlush = exp.Flush
-		trace.RegisterExporter(exp)
-		view.RegisterExporter(exp)
-
-		propr = &sdpropagation.HTTPFormat{}
-
-		errs, err = errorreporting.NewClient(ctx, projectID, errorreporting.Config{
-			ServiceName:    svcName,
-			ServiceVersion: svcVersion,
-			OnError: func(err error) {
-				lg.Log("error", err, "message", "error reporting client encountered an error")
-			},
-		})
-		if err != nil {
-			lg.Log("error", err, "message", "unable to initiate error reporting client")
-		}
-
-		err = profiler.Start(profiler.Config{
-			ProjectID:      projectID,
-			Service:        svcName,
-			ServiceVersion: svcVersion,
-		})
-		if err != nil {
-			lg.Log("error", err, "message", "unable to initiate profiling client")
-		}
->>>>>>> 304ab30917e3595e224058b65344f8d9efe708a1
 	}
 
 	s := &Server{
