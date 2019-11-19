@@ -5,7 +5,11 @@ package gizmo
 
 import (
 	"context"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
+	"sync"
 
 	traceapi "cloud.google.com/go/trace/apiv2"
 	"contrib.go.opencensus.io/exporter/stackdriver"
@@ -27,11 +31,40 @@ func NewStackdriverExporter(projectID string, onErr func(error)) (*stackdriver.E
 	return stackdriver.NewExporter(*opts)
 }
 
+var projectIDOnce = sync.Once{}
+
 // GoogleProjectID returns the GCP Project ID
 // that can be used to instantiate various
 // GCP clients such as Stack Driver.
 func GoogleProjectID() string {
-	return os.Getenv("GOOGLE_CLOUD_PROJECT")
+	id := os.Getenv("GOOGLE_CLOUD_PROJECT")
+	if id != "" {
+		return id
+	}
+
+	projectIDOnce.Do(func() {
+		url := "http://metadata.google.internal/computeMetadata/v1/project/project-id"
+		req, err := http.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			log.Printf("unable to create project id request: %s", err)
+			return
+		}
+		req.Header.Add("Metadata-Flavor", "Google")
+		resp, err := (&http.Client{}).Do(req)
+		if err != nil {
+			log.Printf("unable to request project id: %s", err)
+			return
+		}
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Printf("unable to read project id: %s", err)
+			return
+		}
+		id = string(b)
+		os.Setenv("GOOGLE_CLOUD_PROJECT", id)
+	})
+
+	return id
 }
 
 // IsGAE tells you whether your program is running
@@ -54,8 +87,8 @@ func IsCloudRun() bool {
 
 // GetCloudRunInfo returns the service and the version of the
 // Cloud Run application.
-func GetCloudRunInfo() (service, version, config string) {
-	return os.Getenv("K_SERVICE"), os.Getenv("K_REVISION"), os.Getenv("K_CONFIGURATION")
+func GetCloudRunInfo() (service, version string) {
+	return os.Getenv("K_SERVICE"), os.Getenv("K_REVISION")
 }
 
 // GetServiceInfo returns the GCP Project ID,
@@ -69,7 +102,7 @@ func GetServiceInfo() (projectID, service, version string) {
 	case IsGAE():
 		service, version = GetGAEInfo()
 	case IsCloudRun():
-		service, version, _ = GetCloudRunInfo()
+		service, version = GetCloudRunInfo()
 	default:
 		service, version = os.Getenv("SERVICE_NAME"), os.Getenv("SERVICE_VERSION")
 	}

@@ -313,7 +313,7 @@ func (s *Server) start() error {
 		}
 	}()
 
-	s.logger.Log("message", fmt.Sprintf("listening on HTTP port: %d", s.cfg.HTTPPort))
+	s.logger.Log("message", fmt.Sprintf("listening on HTTP %s:%d", s.cfg.HTTPAddr, s.cfg.HTTPPort))
 
 	if s.gsvr != nil {
 		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.cfg.RPCPort))
