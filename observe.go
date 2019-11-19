@@ -38,7 +38,7 @@ var projectIDOnce = sync.Once{}
 // GCP clients such as Stack Driver.
 func GoogleProjectID() string {
 	id := os.Getenv("GOOGLE_CLOUD_PROJECT")
-	if id != "" {
+	if id != "" || !IsCloudRun() {
 		return id
 	}
 
