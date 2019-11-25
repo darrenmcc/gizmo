@@ -67,7 +67,7 @@ func Log(ctx context.Context, keyvals ...interface{}) error {
 
 // AddLogKeyVals will add any common HTTP headers or gRPC metadata
 // from the given context to the given logger as fields.
-// This is used by the server to initialize the request scopes logger.
+// This is used by the server to initialize the request scoped logger.
 func AddLogKeyVals(ctx context.Context, l log.Logger) log.Logger {
 	// for HTTP requests
 	keys := map[interface{}]string{

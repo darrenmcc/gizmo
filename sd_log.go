@@ -20,7 +20,8 @@ type sdLogger struct {
 	project string
 	monRes  *monitoredres.MonitoredResource
 	lc      *logging.Client
-	lgr     *logging.Logger
+	lgr     *logging.Logger // application logger
+	plgr    *logging.Logger // parent logger for request logs
 }
 
 func newStackdriverLogger(ctx context.Context, logID, projectID, service, version string) (log.Logger, func() error, error) {
@@ -62,6 +63,7 @@ func newStackdriverLogger(ctx context.Context, logID, projectID, service, versio
 	return sdLogger{
 		lc:      client,
 		lgr:     client.Logger(logID),
+		plgr:    client.Logger(logID + "_parent"),
 		project: projectID,
 		monRes:  resource,
 	}, client.Close, nil
@@ -149,7 +151,7 @@ func merge(dst map[string]interface{}, k, v interface{}) {
 	}
 
 	// We want json.Marshaler and encoding.TextMarshaller to take priority over
-	// err.Error() and v.String(). But json.Marshall (called later) does that by
+	// err.Error() and v.String(). But json.Marshal (called later) does that by
 	// default so we force a no-op if it's one of those 2 case.
 	switch x := v.(type) {
 	case json.Marshaler:
