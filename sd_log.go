@@ -134,6 +134,17 @@ func logKeyValsToMap(keyvals ...interface{}) (map[string]interface{}, level.Valu
 			lvl = v.(level.Value)
 		}
 	}
+	message := m["message"]
+
+	if message != "" {
+		host, ok := m["http-host"].(string)
+		if ok && host != "" {
+			tkns := strings.Split(host, "-dot-")
+			if len(tkns) >= 1 {
+				m["message"] = fmt.Sprintf("[%s] %s", tkns[0], message)
+			}
+		}
+	}
 	return m, lvl, traceContext
 }
 

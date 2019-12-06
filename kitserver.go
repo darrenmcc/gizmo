@@ -118,14 +118,16 @@ func NewServer(svc Service) *Server {
 			"message", "unable to initiate error reporting client")
 	}
 
-	err = profiler.Start(profiler.Config{
-		ProjectID:      projectID,
-		Service:        svcName,
-		ServiceVersion: svcVersion,
-	})
-	if err != nil {
-		lg.Log("error", err,
-			"message", "unable to initiate profiling client")
+	if !SkipObserve() {
+		err = profiler.Start(profiler.Config{
+			ProjectID:      projectID,
+			Service:        svcName,
+			ServiceVersion: svcVersion,
+		})
+		if err != nil {
+			lg.Log("error", err,
+				"message", "unable to initiate profiling client")
+		}
 	}
 
 	s := &Server{

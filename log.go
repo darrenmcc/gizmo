@@ -3,6 +3,7 @@ package gizmo
 import (
 	"context"
 	"fmt"
+	stdlog "log"
 	"os"
 
 	"github.com/go-kit/kit/log"
@@ -29,7 +30,7 @@ import (
 // stdout if set.
 func NewLogger(ctx context.Context, logID string) (log.Logger, func() error, error) {
 	if SkipObserve() {
-		return newJSONLogger(), func() error { return nil }, nil
+		return sdtlibLogger{}, func() error { return nil }, nil
 	}
 	projectID, serviceID, svcVersion := GetServiceInfo()
 
@@ -37,10 +38,26 @@ func NewLogger(ctx context.Context, logID string) (log.Logger, func() error, err
 	if err != nil {
 		lg := newJSONLogger()
 		lg.Log("error", err,
-			"message", "unable to initialize Stackdriver logger. falling back to stdout JSON logging.")
+			"message", "unable to initialize Stackdriver logger, falling back to stdout JSON logging.")
 		return lg, func() error { return nil }, nil
 	}
 	return lg, cl, err
+}
+
+type sdtlibLogger struct{}
+
+func (sdtlibLogger) Log(keyvals ...interface{}) error {
+	for i := 0; i < len(keyvals); i++ {
+		s, ok := keyvals[i].(string)
+		if !ok {
+			continue
+		}
+		if s == "message" && i < len(keyvals)-1 {
+			stdlog.Println(keyvals[i+1])
+			break
+		}
+	}
+	return nil
 }
 
 func newJSONLogger() log.Logger {

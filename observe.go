@@ -145,9 +145,6 @@ func getSDOpts(projectID, service, version string, onErr func(err error)) *stack
 	}
 }
 
-// SkipObserve checks if the GIZMO_SKIP_OBSERVE environment variable has been populated.
-// This may be used along with local development to cut down on long startup times caused
-// by the 'monitoredresource.Autodetect()' call in IsGCPEnabled().
 func SkipObserve() bool {
-	return os.Getenv("GIZMO_SKIP_OBSERVE") != ""
+	return os.Getenv("GOOGLE_CLOUD_PROJECT") == ""
 }
